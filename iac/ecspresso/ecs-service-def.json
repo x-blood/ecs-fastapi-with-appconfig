@@ -1,0 +1,47 @@
+{
+  "deploymentConfiguration": {
+    "deploymentCircuitBreaker": {
+      "enable": true,
+      "rollback": true
+    },
+    "maximumPercent": 200,
+    "minimumHealthyPercent": 100
+  },
+  "deploymentController": {
+    "type": "ECS"
+  },
+  "desiredCount": 1,
+  "enableECSManagedTags": false,
+  "enableExecuteCommand": false,
+  "healthCheckGracePeriodSeconds": 0,
+  "launchType": "FARGATE",
+  "loadBalancers": [
+    {
+      "containerName": "app",
+      "containerPort": 80,
+      "targetGroupArn": "{{ tfstate `aws_lb_target_group.yassan-fa-ac-alb-tg.arn` }}"
+    }
+  ],
+  "networkConfiguration": {
+    "awsvpcConfiguration": {
+      "assignPublicIp": "ENABLED",
+      "securityGroups": [
+        "{{ tfstate `aws_security_group.yassan-fa-ac-ecs-srv-sg.id` }}"
+      ],
+      "subnets": [
+        "{{ must_env `TF_VAR_subnet_id_public_a` }}",
+        "{{ must_env `TF_VAR_subnet_id_public_c` }}"
+      ]
+    }
+  },
+  "platformFamily": "Linux",
+  "platformVersion": "LATEST",
+  "propagateTags": "SERVICE",
+  "schedulingStrategy": "REPLICA",
+  "tags": [
+    {
+      "key": "DoNotNuke",
+      "value": "true"
+    }
+  ]
+}
