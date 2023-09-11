@@ -131,13 +131,13 @@ resource "aws_appconfig_configuration_profile" "yassan-ac-c-profile" {
   application_id = aws_appconfig_application.yassan-ac-app.id
   location_uri   = "hosted"
   name           = "yassan-ac-cprofile"
-  type = "AWS.AppConfig.FeatureFlags"
+  type           = "AWS.AppConfig.FeatureFlags"
 }
 
 resource "aws_appconfig_hosted_configuration_version" "yassan-ac-hcv" {
   application_id           = aws_appconfig_application.yassan-ac-app.id
   configuration_profile_id = aws_appconfig_configuration_profile.yassan-ac-c-profile.configuration_profile_id
-  content                  = jsonencode({
+  content = jsonencode({
     flags : {
       featureA : {
         name : "featureA"
@@ -150,7 +150,7 @@ resource "aws_appconfig_hosted_configuration_version" "yassan-ac-hcv" {
     },
     version : "1"
   })
-  content_type             = "application/json"
+  content_type = "application/json"
 }
 
 resource "aws_appconfig_environment" "yassan-ac-env-dev" {
@@ -161,7 +161,7 @@ resource "aws_appconfig_environment" "yassan-ac-env-dev" {
 resource "aws_appconfig_deployment_strategy" "yassan-ac-deploy-stg" {
   deployment_duration_in_minutes = 0
   growth_factor                  = 100
-  final_bake_time_in_minutes = 0
+  final_bake_time_in_minutes     = 0
   name                           = "yassan-ac-deploy-stg"
   replicate_to                   = "NONE"
 }
@@ -212,7 +212,7 @@ resource "aws_iam_role" "yassan-fa-ac-ecs-task-role" {
 
 resource "aws_iam_role_policy" "yasan-fa-ac-ecs-task-policy" {
   name = "yasan-fa-ac-ecs-task-policy"
-  role   = aws_iam_role.yassan-fa-ac-ecs-task-role.id
+  role = aws_iam_role.yassan-fa-ac-ecs-task-role.id
   policy = jsonencode({
     "Version" : "2012-10-17",
     "Statement" : [
