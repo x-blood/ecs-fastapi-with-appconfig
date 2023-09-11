@@ -145,7 +145,7 @@ resource "aws_appconfig_hosted_configuration_version" "yassan-ac-hcv" {
     },
     values : {
       featureA : {
-        enabled : "true"
+        enabled : "false"
       }
     },
     version : "1"
