@@ -2,8 +2,26 @@
   "containerDefinitions": [
     {
       "cpu": 0,
+      "environment": [
+        {
+          "name": "APPCONFIG_ENVIRONMENT_NAME",
+          "value": "{{ tfstate `aws_appconfig_environment.yassan-ac-env-dev.name` }}"
+        },
+        {
+          "name": "APPCONFIG_CONFIGURATION_PROFILE_NAME",
+          "value": "{{ tfstate `aws_appconfig_configuration_profile.yassan-ac-c-profile.name` }}"
+        },
+        {
+          "name": "APPCONFIG_APPLICATION_NAME",
+          "value": "{{ tfstate `aws_appconfig_application.yassan-ac-app.name` }}"
+        },
+        {
+          "name": "APPCONFIG_FEATURE_FLAG_KEY_NAME",
+          "value": "featureA"
+        }
+      ],
       "essential": true,
-      "image": "{{ must_env `M_AWS_ACCOUNT_ID` }}.dkr.ecr.ap-northeast-1.amazonaws.com/yassan-fa-ac-repository:5396017",
+      "image": "{{ must_env `M_AWS_ACCOUNT_ID` }}.dkr.ecr.ap-northeast-1.amazonaws.com/yassan-fa-ac-repository:{{ must_env `CONTAINER_IMAGE_TAG` }}",
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
@@ -46,7 +64,7 @@
     }
   ],
   "cpu": "512",
-  "executionRoleArn": "arn:aws:iam::{{ must_env `M_AWS_ACCOUNT_ID` }}:role/ecsTaskExecutionRole",
+  "executionRoleArn": "arn:aws:iam::{{ must_env `M_AWS_ACCOUNT_ID` }}:role/{{ tfstate `aws_iam_role.yassan-fa-ac-ecs-task-execution-role.name` }}",
   "family": "yassan-fa-ac-task",
   "ipcMode": "",
   "memory": "1024",
@@ -61,5 +79,5 @@
       "value": "true"
     }
   ],
-  "taskRoleArn": "arn:aws:iam::{{ must_env `M_AWS_ACCOUNT_ID` }}:role/ecsTaskRole"
+  "taskRoleArn": "arn:aws:iam::{{ must_env `M_AWS_ACCOUNT_ID` }}:role/{{ tfstate `aws_iam_role.yassan-fa-ac-ecs-task-role.name` }}"
 }

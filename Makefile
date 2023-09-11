@@ -8,6 +8,7 @@ echo_env:
 	@echo $(TF_VAR_vpc_id)
 	@echo $(TF_VAR_subnet_id_public_a)
 	@echo $(TF_VAR_subnet_id_public_c)
+	@echo $(CONTAINER_IMAGE_TAG)
 	@echo $(COMMIT_HASH)
 
 tf_tagging_tfstate:
