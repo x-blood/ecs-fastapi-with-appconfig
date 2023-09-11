@@ -35,3 +35,13 @@ app_build_and_push:
 	docker tag fastapi_appconfig:latest $(M_AWS_ACCOUNT_ID).dkr.ecr.ap-northeast-1.amazonaws.com/yassan-fa-ac-repository:$(COMMIT_HASH)
 	docker push $(M_AWS_ACCOUNT_ID).dkr.ecr.ap-northeast-1.amazonaws.com/yassan-fa-ac-repository:$(COMMIT_HASH)
 	echo COMMIT_HASH=$(COMMIT_HASH)
+
+ecspresso_delete:
+	cd iac/ecspresso && ecspresso scale --tasks=0
+	cd iac/ecspresso && ecspresso delete
+
+ecr_clean:
+	aws ecr describe-images --repository-name yassan-fa-ac-repository --query 'imageDetails[]' | jq 'sort_by(.imagePushedAt) | .[].imageTags[]' -r | head -n 1000 | xargs -I{} aws ecr batch-delete-image --repository-name yassan-fa-ac-repository --image-ids imageTag={}
+
+tf_destroy:
+	cd iac/terraform && terraform destroy
