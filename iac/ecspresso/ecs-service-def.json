@@ -24,13 +24,13 @@
   ],
   "networkConfiguration": {
     "awsvpcConfiguration": {
-      "assignPublicIp": "ENABLED",
+      "assignPublicIp": "DISABLED",
       "securityGroups": [
         "{{ tfstate `aws_security_group.yassan-fa-ac-ecs-srv-sg.id` }}"
       ],
       "subnets": [
-        "{{ must_env `TF_VAR_subnet_id_public_a` }}",
-        "{{ must_env `TF_VAR_subnet_id_public_c` }}"
+        "{{ must_env `TF_VAR_subnet_id_private_a` }}",
+        "{{ must_env `TF_VAR_subnet_id_private_c` }}"
       ]
     }
   },

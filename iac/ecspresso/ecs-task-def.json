@@ -43,7 +43,7 @@
     {
       "cpu": 0,
       "essential": true,
-      "image": "public.ecr.aws/aws-appconfig/aws-appconfig-agent:2.x",
+      "image": "{{ must_env `M_AWS_ACCOUNT_ID` }}.dkr.ecr.ap-northeast-1.amazonaws.com/ecr-public/aws-appconfig/aws-appconfig-agent:2.x",
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
