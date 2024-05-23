@@ -23,6 +23,11 @@ resource "aws_ecr_repository" "yassan-fa-ac-repository" {
   name = "yassan-fa-ac-repository"
 }
 
+resource "aws_ecr_pull_through_cache_rule" "yassan-fa-ac-ecr-ptcr-ecr-public" {
+  ecr_repository_prefix = "ecr-public"
+  upstream_registry_url = "public.ecr.aws"
+}
+
 # ECS
 resource "aws_ecs_cluster" "yassan-fa-ac-cluster" {
   name = "yassan-fa-ac-cluster"
@@ -115,6 +120,125 @@ resource "aws_security_group_rule" "yassan-fa-ac-ecs-srv-sg-egress" {
   protocol          = "-1"
   cidr_blocks       = ["0.0.0.0/0"]
   security_group_id = aws_security_group.yassan-fa-ac-ecs-srv-sg.id
+}
+
+# Security Group VPC Endpoint
+resource "aws_security_group" "yassan-fa-ac-vpce-sg" {
+  vpc_id = var.vpc_id
+  name   = "yassan-fa-ac-vpce-sg"
+}
+
+resource "aws_security_group_rule" "yassan-fa-ac-vpce-sg-ingress" {
+  type              = "ingress"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.yassan-fa-ac-vpce-sg.id
+}
+
+resource "aws_security_group_rule" "yassan-fa-ac-vpce-sg-egress" {
+  type              = "egress"
+  from_port         = 0
+  to_port           = 0
+  protocol          = "-1"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = aws_security_group.yassan-fa-ac-vpce-sg.id
+}
+
+# VPC Endpoint
+resource "aws_vpc_endpoint" "vpce_appconfig" {
+  vpc_id            = var.vpc_id
+  service_name      = "com.amazonaws.ap-northeast-1.appconfig"
+  vpc_endpoint_type = "Interface"
+
+  subnet_ids = [
+    var.subnet_id_private_a,
+    var.subnet_id_private_c
+  ]
+
+  security_group_ids = [
+    aws_security_group.yassan-fa-ac-vpce-sg.id,
+  ]
+
+  private_dns_enabled = true
+}
+
+resource "aws_vpc_endpoint" "vpce_appconfigdata" {
+  vpc_id            = var.vpc_id
+  service_name      = "com.amazonaws.ap-northeast-1.appconfigdata"
+  vpc_endpoint_type = "Interface"
+
+  subnet_ids = [
+    var.subnet_id_private_a,
+    var.subnet_id_private_c
+  ]
+
+  security_group_ids = [
+    aws_security_group.yassan-fa-ac-vpce-sg.id,
+  ]
+
+  private_dns_enabled = true
+}
+
+resource "aws_vpc_endpoint" "vpce_ecrapi" {
+  vpc_id            = var.vpc_id
+  service_name      = "com.amazonaws.ap-northeast-1.ecr.api"
+  vpc_endpoint_type = "Interface"
+
+  subnet_ids = [
+    var.subnet_id_private_a,
+    var.subnet_id_private_c
+  ]
+
+  security_group_ids = [
+    aws_security_group.yassan-fa-ac-vpce-sg.id,
+  ]
+
+  private_dns_enabled = true
+}
+
+resource "aws_vpc_endpoint" "vpce_ecrdkr" {
+  vpc_id            = var.vpc_id
+  service_name      = "com.amazonaws.ap-northeast-1.ecr.dkr"
+  vpc_endpoint_type = "Interface"
+
+  subnet_ids = [
+    var.subnet_id_private_a,
+    var.subnet_id_private_c
+  ]
+
+  security_group_ids = [
+    aws_security_group.yassan-fa-ac-vpce-sg.id,
+  ]
+
+  private_dns_enabled = true
+}
+
+resource "aws_vpc_endpoint" "s3" {
+  vpc_id       = var.vpc_id
+  service_name = "com.amazonaws.ap-northeast-1.s3"
+  route_table_ids = [
+    var.route_table_id_private_a,
+    var.route_table_id_private_c
+  ]
+}
+
+resource "aws_vpc_endpoint" "vpce_logs" {
+  vpc_id            = var.vpc_id
+  service_name      = "com.amazonaws.ap-northeast-1.logs"
+  vpc_endpoint_type = "Interface"
+
+  subnet_ids = [
+    var.subnet_id_private_a,
+    var.subnet_id_private_c
+  ]
+
+  security_group_ids = [
+    aws_security_group.yassan-fa-ac-vpce-sg.id,
+  ]
+
+  private_dns_enabled = true
 }
 
 # CloudWatch Log Group
